@@ -16,12 +16,16 @@
               :key="header.headerProps.key"
               class="s-table__th"
             >
-              {{ header.title }}
+              <div v-if="header.onSort" class="s-table__sorter">
+                <span class="s-table__th-title">{{ header.title }}</span>
+                <s-sorter @change="handleSorterChange(header, $event)" />
+              </div>
+              <template v-else>{{ header.title }}</template>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(cells, i) in dataRows" :key="i">
+          <tr v-for="(cells, i) in data" :key="i">
             <td v-for="(cell, i) in cells" :key="i" class="s-table__td">
               {{ cell.value }}
             </td>
@@ -34,7 +38,7 @@
     </div>
     <!-- 分页区 -->
     <s-pagination
-      v-if="paginationVisible"
+      v-if="pagination !== null"
       v-bind="paginationState"
       @change="handlePaginationChange"
     />
@@ -45,6 +49,7 @@ import { defineComponent, PropType, toRef } from "vue";
 
 // component
 import SPagination from "./components/SimplePagination.vue";
+import SSorter from "./components/TableSorter.vue";
 
 // hooks
 import useSlotExist from "./hooks/useSlotExist";
@@ -57,6 +62,7 @@ import useTableSort from "./hooks/useTableSort";
 export default defineComponent({
   name: "SimpleTable",
   components: {
+    SSorter,
     SPagination,
   },
   props: {
@@ -72,12 +78,7 @@ export default defineComponent({
   },
   emits: ["change"],
   setup(props, { slots, emit }) {
-    const dataSource = toRef(props, "dataSource");
     const $pagination = toRef(props, "pagination");
-
-    const paginationVisible = computed(() => {
-      return $pagination.value !== false;
-    });
 
     const handleTableChange = (pagination: any, sorter: any, extra: any) => {
       emit("change", pagination, sorter, extra);
@@ -93,31 +94,39 @@ export default defineComponent({
         handleTableChange(pagination, sorter, { type: "pagination" });
       }
     };
-    const handleSortChange = () => {
-      // "ascend" | "descend" | undefined
-      const sorter = { field: "123", order: "ascend" };
+
+    const handleSorterChange = (
+      column: any,
+      type: "ascend" | "descend" | undefined
+    ) => {
+      console.log(column, type);
     };
 
     // custom hook
     const headerVisible = useSlotExist(slots.header);
     const footerVisible = useSlotExist(slots.footer);
 
-    const [headerGroups, dataColumns] = useTableColumns(slots.default);
+    const [headerGroups, dataColumns, allColumns] = useTableColumns(
+      slots.default
+    );
+
+    const dataSource = useTableSort(toRef(props, "dataSource"), allColumns);
+
     const rows = useTableBody(dataSource, dataColumns);
 
-    const [dataRows, paginationState, updatePagination] = usePagination(
-      useTableSort(rows),
+    const [data, paginationState, updatePagination] = usePagination(
+      rows,
       $pagination
     ); // 分页
 
     return {
       headerVisible,
       footerVisible,
-      paginationVisible,
       headerGroups,
-      dataRows,
-      handlePaginationChange,
+      data,
       paginationState,
+      handlePaginationChange,
+      handleSorterChange,
     };
   },
 });
@@ -136,6 +145,13 @@ export default defineComponent({
     .s-table__td {
       border: 1px solid #f0f0f0;
       padding: 8px;
+    }
+  }
+  .s-table__sorter {
+    display: flex;
+    align-self: center;
+    .s-table__th-title {
+      flex: auto;
     }
   }
 

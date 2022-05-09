@@ -50,7 +50,8 @@ export default function makeHeaderGroups($columns: ColumnsType) {
   (function traverse($columns: ColumnsType, $parent?: number, depth = 0) {
     const columns = normalizeColumns($columns, $parent);
     const groups = columns.reduce((groups, { column, parent }) => {
-      const { title, onSort, children } = column as ColumnGroupType<unknown>;
+      const { title, onSort, onFilter, children } =
+        column as ColumnGroupType<unknown>;
       const hasChildren = (children || []).length > 0;
       const key = getUid();
 
@@ -58,7 +59,12 @@ export default function makeHeaderGroups($columns: ColumnsType) {
       hasChildren && traverse(children, key, depth + 1);
 
       allColumns.push({ ...column, key });
-      return groups.concat({ title, headerProps: { key, parent }, onSort });
+      return groups.concat({
+        title,
+        headerProps: { key, parent },
+        onSort,
+        onFilter,
+      });
     }, [] as HeaderGroupType[]);
 
     headerGroups[depth] = (headerGroups[depth] || []).concat(groups);

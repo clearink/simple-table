@@ -11,6 +11,7 @@ export default function useTableColumns(defaultSlot?: Slot) {
   // 生成表格头部数据
   const headerGroups = shallowRef<HeaderGroupType[][]>([]);
   const dataColumns = shallowRef<object[]>([]);
+  const allColumns = shallowRef<object[]>([]);
 
   // 解析 vNode 生成对应的 columns 数据
   const makeColumns = (slot?: Slot): any[] => {
@@ -47,6 +48,7 @@ export default function useTableColumns(defaultSlot?: Slot) {
     const makeResult = makeHeaderGroups(columns);
     headerGroups.value = makeResult.headerGroups;
     dataColumns.value = makeResult.dataColumns;
+    allColumns.value = makeResult.allColumns;
   });
-  return [headerGroups, dataColumns] as const;
+  return [headerGroups, dataColumns, allColumns] as const;
 }

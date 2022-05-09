@@ -6,6 +6,7 @@ export interface ColumnType<RecordType> {
   rowSpan?: number;
   data?: RecordType; // 暂时这样吧
   onSort?: (a: unknown, b: unknown) => number;
+  onFilter?: (a: unknown, b: unknown) => boolean;
 }
 
 export interface ColumnGroupType<RecordType>

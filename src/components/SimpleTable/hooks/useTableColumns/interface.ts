@@ -4,6 +4,7 @@ export interface HeaderGroupType {
   title?: string;
   headerProps: Record<string, any> & commonCellProps;
   onSort?: (a: unknown, b: unknown) => number;
+  onFilter?: (a: unknown, b: unknown) => boolean;
 }
 
 export interface commonCellProps {
