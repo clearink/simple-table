@@ -1,7 +1,7 @@
 export type DataIndex = string | number | readonly (string | number)[];
 export interface ColumnType<RecordType> {
   title?: string;
-  'data-index'?: DataIndex;
+  dataIndex?: DataIndex;
   colSpan?: number;
   rowSpan?: number;
   data?: RecordType; // 暂时这样吧

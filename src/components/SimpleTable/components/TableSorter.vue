@@ -1,12 +1,33 @@
 <template>
-  <span class="s-sorter"></span>
+  <span
+    :class="[
+      's-sorter',
+      value === 'ascend' && 'is-ascend',
+      value === 'descend' && 'is-descend',
+    ]"
+    @click="handleClick"
+  ></span>
 </template>
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, toRefs } from "vue";
+import { defineComponent, watchEffect } from "vue";
 
 export default defineComponent({
   name: "TableSorter",
   emits: ["change"],
+  props: ["value"],
+  setup(props, { emit }) {
+    const handleClick = () => {
+      const map = new Map([
+        [undefined, "ascend"],
+        ["ascend", "descend"],
+        ["descend", undefined],
+      ]);
+      emit("change", map.get(props.value));
+    };
+    return {
+      handleClick,
+    };
+  },
 });
 </script>
 <style lang="scss" scoped>
@@ -22,12 +43,12 @@ $active-color: #096dd9;
   min-height: 16px;
   margin-left: 4px;
   cursor: pointer;
-  @mixin triangle {
+  @mixin triangle($color: $default-color) {
     width: 0;
     height: 0;
     $size: 4px;
-    border-top: 0 solid $default-color;
-    border-bottom: $size * 1.5 solid $default-color;
+    border-top: 0 solid $color;
+    border-bottom: $size * 1.5 solid $color;
     border-right: $size solid transparent;
     border-left: $size solid transparent;
   }
@@ -42,6 +63,16 @@ $active-color: #096dd9;
     display: inline-block;
     transform: rotate(180deg);
     @include triangle();
+  }
+  &.is-ascend {
+    &::before {
+      @include triangle($active-color);
+    }
+  }
+  &.is-descend {
+    &::after {
+      @include triangle($active-color);
+    }
   }
 }
 </style>

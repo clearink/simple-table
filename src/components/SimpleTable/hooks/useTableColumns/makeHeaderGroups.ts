@@ -61,6 +61,7 @@ export default function makeHeaderGroups($columns: ColumnsType) {
       allColumns.push({ ...column, key });
       return groups.concat({
         title,
+        column,
         headerProps: { key, parent },
         onSort,
         onFilter,

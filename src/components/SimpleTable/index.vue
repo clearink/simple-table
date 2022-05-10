@@ -18,7 +18,10 @@
             >
               <div v-if="header.onSort" class="s-table__sorter">
                 <span class="s-table__th-title">{{ header.title }}</span>
-                <s-sorter @change="handleSorterChange(header, $event)" />
+                <s-sorter
+                  :value="findSortState(header)"
+                  @change="handleSorterChange(header, $event)"
+                />
               </div>
               <template v-else>{{ header.title }}</template>
             </th>
@@ -55,7 +58,6 @@ import SSorter from "./components/TableSorter.vue";
 import useSlotExist from "./hooks/useSlotExist";
 import useTableColumns from "./hooks/useTableColumns";
 import useTableBody from "./hooks/useTableBody";
-import { computed } from "@vue/reactivity";
 import usePagination, { PaginationProps } from "./hooks/usePagination";
 import useTableSort from "./hooks/useTableSort";
 // ts
@@ -99,7 +101,7 @@ export default defineComponent({
       column: any,
       type: "ascend" | "descend" | undefined
     ) => {
-      console.log(column, type);
+      triggerSorter(column, type);
     };
 
     // custom hook
@@ -110,7 +112,10 @@ export default defineComponent({
       slots.default
     );
 
-    const dataSource = useTableSort(toRef(props, "dataSource"), allColumns);
+    const [dataSource, triggerSorter, findSortState] = useTableSort(
+      toRef(props, "dataSource"),
+      allColumns
+    );
 
     const rows = useTableBody(dataSource, dataColumns);
 
@@ -127,6 +132,7 @@ export default defineComponent({
       paginationState,
       handlePaginationChange,
       handleSorterChange,
+      findSortState,
     };
   },
 });
