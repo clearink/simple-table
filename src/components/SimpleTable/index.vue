@@ -48,21 +48,24 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, PropType, toRef } from "vue";
+import { defineComponent, PropType, toRef } from 'vue'
 
 // component
-import SPagination from "./components/SimplePagination.vue";
-import SSorter from "./components/TableSorter.vue";
+import SPagination from './components/SimplePagination.vue'
+import SSorter from './components/TableSorter.vue'
 
 // hooks
-import useSlotExist from "./hooks/useSlotExist";
-import useTableColumns from "./hooks/useTableColumns";
-import useTableBody from "./hooks/useTableBody";
-import usePagination, { PaginationProps } from "./hooks/usePagination";
-import useTableSort from "./hooks/useTableSort";
+import useSlotExist from './hooks/useSlotExist'
+import useTableColumns from './hooks/useTableColumns'
+import useTableBody from './hooks/useTableBody'
+import usePagination, { PaginationProps } from './hooks/usePagination'
+import useTableSort from './hooks/useTableSort'
+
+export { default as SimpleTableColumn } from './components/placeholder/TableColumn'
+export { default as SimpleTableColumnGroup } from './components/placeholder/TableColumnGroup'
 // ts
 export default defineComponent({
-  name: "SimpleTable",
+  name: 'SimpleTable',
   components: {
     SSorter,
     SPagination,
@@ -78,51 +81,51 @@ export default defineComponent({
       type: Object as PropType<PaginationProps | null>,
     },
   },
-  emits: ["change"],
+  emits: ['change'],
   setup(props, { slots, emit }) {
-    const $pagination = toRef(props, "pagination");
+    const $pagination = toRef(props, 'pagination')
 
     const handleTableChange = (pagination: any, sorter: any, extra: any) => {
-      emit("change", pagination, sorter, extra);
-    };
+      emit('change', pagination, sorter, extra)
+    }
 
     const handlePaginationChange = (current: number, pageSize: number) => {
-      const pagination = { current, pageSize, total: rows.value.length };
+      const pagination = { current, pageSize, total: rows.value.length }
       if (props.pagination === undefined) {
         // 修改内部的数据
-        updatePagination(pagination);
+        updatePagination(pagination)
       } else {
-        const sorter = {};
-        handleTableChange(pagination, sorter, { type: "pagination" });
+        const sorter = {}
+        handleTableChange(pagination, sorter, { type: 'pagination' })
       }
-    };
+    }
 
     const handleSorterChange = (
       column: any,
-      type: "ascend" | "descend" | undefined
+      type: 'ascend' | 'descend' | undefined
     ) => {
-      triggerSorter(column, type);
-    };
+      triggerSorter(column, type)
+    }
 
     // custom hook
-    const headerVisible = useSlotExist(slots.header);
-    const footerVisible = useSlotExist(slots.footer);
+    const headerVisible = useSlotExist(slots.header)
+    const footerVisible = useSlotExist(slots.footer)
 
     const [headerGroups, dataColumns, allColumns] = useTableColumns(
       slots.default
-    );
+    )
 
     const [dataSource, triggerSorter, findSortState] = useTableSort(
-      toRef(props, "dataSource"),
+      toRef(props, 'dataSource'),
       allColumns
-    );
+    )
 
-    const rows = useTableBody(dataSource, dataColumns);
+    const rows = useTableBody(dataSource, dataColumns)
 
     const [data, paginationState, updatePagination] = usePagination(
       rows,
       $pagination
-    ); // 分页
+    ) // 分页
 
     return {
       headerVisible,
@@ -133,9 +136,9 @@ export default defineComponent({
       handlePaginationChange,
       handleSorterChange,
       findSortState,
-    };
+    }
   },
-});
+})
 </script>
 <style lang="scss" scoped>
 .s-table {

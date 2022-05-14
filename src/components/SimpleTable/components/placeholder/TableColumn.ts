@@ -1,6 +1,5 @@
 import { defineComponent, PropType } from "vue";
-import { TableColumnProps as ColumnProps } from "./interface";
-//  TODO: 提取 props 属性
+import { TableColumnProps as ColumnProps } from "../interface";
 export default defineComponent({
   name: "SimpleTableColumn",
   props: {

@@ -1,7 +1,7 @@
 import { onBeforeUpdate, shallowRef, Slot, watchEffect } from "vue";
 // component
-import Column from "../../components/TableColumn";
-import Group from "../../components/TableColumnGroup";
+import Column from "../../components/placeholder/TableColumn";
+import Group from "../../components/placeholder/TableColumnGroup";
 // utils
 import makeHeaderGroups from "./makeHeaderGroups";
 // ts

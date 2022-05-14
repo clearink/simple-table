@@ -1,5 +1,5 @@
 import { defineComponent, PropType } from "vue";
-import { TableColumnGroupProps as GroupProps } from "./interface";
+import { TableColumnGroupProps as GroupProps } from "../interface";
 //  TODO: 提取 props 属性
 export default defineComponent({
   name: "SimpleTableColumnGroup",
