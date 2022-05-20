@@ -1,7 +1,7 @@
 import { defineComponent, PropType } from "vue";
 import { TableColumnProps as ColumnProps } from "../interface";
-export default defineComponent({
-  name: "SimpleTableColumn",
+const Component = defineComponent({
+  name: "TableColumn",
   props: {
     title: {
       type: String as PropType<ColumnProps<unknown>["title"]>,
@@ -20,3 +20,5 @@ export default defineComponent({
     return () => null;
   },
 });
+Component.displayName = Symbol.for("TableColumn");
+export default Component;

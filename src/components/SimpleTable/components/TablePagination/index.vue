@@ -30,7 +30,7 @@
     <div v-if="showQuickJumper" class="s-pagination__jumper">
       <span>跳至</span>
       <input
-      class="s-pagination__jumper-input"
+        class="s-pagination__jumper-input"
         v-model="value"
         @blur="handleInputChange"
         @keyup.enter="handleInputChange"
@@ -43,7 +43,7 @@
 import { computed, defineComponent, PropType, ref, toRefs } from "vue";
 
 export default defineComponent({
-  name: "SimplePagination",
+  name: "TablePagination",
   emits: ["change"],
   props: {
     current: {
@@ -137,8 +137,8 @@ export default defineComponent({
       border-color: #d9d9d9;
     }
   }
-  .s-pagination__jumper{
-    .s-pagination__jumper-input{
+  .s-pagination__jumper {
+    .s-pagination__jumper-input {
       margin: 0 8px;
       width: 48px;
       line-height: 32px;

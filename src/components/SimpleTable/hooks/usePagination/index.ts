@@ -1,4 +1,5 @@
-import { Ref, ref, computed, watchEffect } from "vue";
+import { Ref, ref, computed } from "vue";
+import { TableBodyDataType } from "../../interface";
 
 // 分页
 export interface PaginationProps {
@@ -7,7 +8,7 @@ export interface PaginationProps {
   total?: number;
 }
 export default function usePagination(
-  $rows: Ref<any[]>,
+  $rows: Ref<TableBodyDataType[]>,
   $pagination: Ref<PaginationProps | null | undefined>
 ) {
   // 内部存储分页相关数据

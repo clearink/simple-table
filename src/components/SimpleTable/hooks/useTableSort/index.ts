@@ -1,29 +1,29 @@
-import { computed, Ref, ref, watchEffect } from "vue";
-import { HeaderGroupType } from "./useTableColumns/interface";
+import { computed, provide, Ref, ref } from "vue";
+import { ColumnType, NormalizedColumnsType } from "../../interface";
 
 // 收集所有的 排序 状态
-function collectSortState($columns: any[]) {
+function collectSortState($columns: NormalizedColumnsType[]) {
   return $columns
-    .filter((column: any) => typeof column.onSort === "function")
-    .map((item) => ({
-      dataIndex: item.dataIndex,
-      onSort: item.onSort,
-      sortOrder: undefined as any,
+    .filter(({ column }) => typeof column.onSort === "function")
+    .map(({ column }) => ({
+      dataIndex: column.dataIndex,
+      onSort: column.onSort,
+      sortOrder: undefined as "ascend" | "descend" | undefined,
     }));
 }
 
 // 排序 仅支持 visibleColumns 的排序
 export default function useTableSort(
   $dataSource: Ref<any[]>,
-  $columns: Ref<any[]>
+  $columns: Ref<NormalizedColumnsType[]>
 ) {
   const sortState = ref(collectSortState($columns.value)); // 存储收集起来的状态
 
   const triggerSorter = (
-    header: HeaderGroupType,
+    column: ColumnType,
     type: "ascend" | "descend" | undefined
   ) => {
-    const { dataIndex } = header.column;
+    const { dataIndex } = column;
     sortState.value = sortState.value.map((item) => {
       if (item.dataIndex === dataIndex) {
         return { ...item, sortOrder: type };
@@ -32,26 +32,30 @@ export default function useTableSort(
     });
   };
 
-  const findSortState = (header: HeaderGroupType) => {
-    const { dataIndex } = header.column;
+  const findSortState = (column: ColumnType) => {
+    const { dataIndex } = column;
     const state = sortState.value;
     return state.find((state) => state.dataIndex === dataIndex)?.sortOrder;
   };
 
   const dataSource = computed(() => {
-    return sortState.value.reduce((result, sort) => {
+    return sortState.value.reduce((result, { onSort, sortOrder }) => {
       return result.sort((a, b) => {
-        const result = sort.onSort(a, b);
+        const result = onSort?.(a, b) ?? 0;
         return (
           result *
           new Map([
             [undefined, 0],
             ["ascend", 1],
             ["descend", -1],
-          ]).get(sort.sortOrder)!
+          ]).get(sortOrder)!
         );
       });
     }, $dataSource.value.slice());
   });
-  return [dataSource, triggerSorter, findSortState] as const;
+
+  provide("triggerSorter", triggerSorter);
+  provide("findSortState", findSortState);
+
+  return dataSource;
 }

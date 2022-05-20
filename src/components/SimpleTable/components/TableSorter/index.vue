@@ -9,7 +9,7 @@
   ></span>
 </template>
 <script lang="ts">
-import { defineComponent, watchEffect } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "TableSorter",
