@@ -4,11 +4,11 @@
       <template #title>21232123123</template>
     </s-table-column>
 
-    <s-table-column-group title="Score">
+    <s-table-column-group title="Score" :sortable="handleSort('chinese')">
       <s-table-column
         title="Chinese"
         data-index="chinese"
-        :onSort="handleSort('chinese')"
+        :sortable="handleSort('chinese')"
       >
         <template #default="{ value, record }">
           {{ value }}--{{ record.name }}
@@ -18,12 +18,12 @@
       <s-table-column
         title="Math"
         data-index="math"
-        :onSort="handleSort('math')"
+        :sortable="handleSort('math')"
       />
       <s-table-column
         title="English"
         data-index="english"
-        :onSort="handleSort('english')"
+        :sortable="handleSort('english')"
       />
     </s-table-column-group>
   </s-table>

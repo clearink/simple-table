@@ -1,19 +1,16 @@
 import { defineComponent, PropType } from "vue";
-import { TableColumnProps as ColumnProps } from "../interface";
+import { ColumnType } from "../../interface";
 const Component = defineComponent({
   name: "TableColumn",
   props: {
     title: {
-      type: String as PropType<ColumnProps<unknown>["title"]>,
+      type: String as PropType<ColumnType["title"]>,
     },
     dataIndex: {
-      type: [String, Number] as PropType<ColumnProps<unknown>["dataIndex"]>,
+      type: [String, Number] as PropType<ColumnType["data-index"]>,
     },
-    onSort: {
-      type: Function as PropType<ColumnProps<unknown>["onSort"]>,
-    },
-    onFilter: {
-      type: Function as PropType<ColumnProps<unknown>["onFilter"]>,
+    sortable: {
+      type: Object as PropType<ColumnType["sortable"]>,
     },
   },
   setup() {

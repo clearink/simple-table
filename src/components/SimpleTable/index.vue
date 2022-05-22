@@ -1,12 +1,12 @@
 <template>
   <div class="s-table">
-    <div class="s-table__header" v-if="headerVisible">
+    <div class="s-table__title" v-if="titleVisible">
       <slot name="title"></slot>
     </div>
     <div class="s-table__container">
       <table class="s-table__table">
-        <table-header :data-source="headerGroups" />
-        <table-body :data-source="cellGroups" />
+        <table-header :data-source="headers" />
+        <table-body :data-source="cells" :row-key="rowKey" />
       </table>
     </div>
     <div class="s-table__footer" v-if="footerVisible">
@@ -35,10 +35,6 @@ import TablePagination from "./components/TablePagination/index.vue";
 // hooks
 import useTableDataSource from "./hooks/useTableDataSource";
 import useSlotExist from "./hooks/useSlotExist";
-import useTableColumns from "./hooks/useTableColumns";
-import useTableBody from "./hooks/useTableBody";
-import useTableSort from "./hooks/useTableSort";
-import usePagination from "./hooks/usePagination";
 
 // ts
 import type { PaginationProps } from "./hooks/usePagination";
@@ -86,29 +82,19 @@ export default defineComponent({
     };
 
     // custom hook
-    const headerVisible = useSlotExist(slots.header);
+    const titleVisible = useSlotExist(slots.title);
     const footerVisible = useSlotExist(slots.footer);
 
-    useTableDataSource(toRef(props, "dataSource"));
-
-    const [headerGroups, dataColumns, allColumns] = useTableColumns(
+    const { rows, updatePagination, ...rest } = useTableDataSource(
+      toRef(props, "dataSource"),
+      $pagination,
       slots.default
     );
 
-    const dataSource = useTableSort(toRef(props, "dataSource"), allColumns);
-
-    const rows = useTableBody(dataSource, dataColumns);
-
-    const [cellGroups, paginationState, updatePagination] = usePagination(
-      rows,
-      $pagination
-    ); // 分页
     return {
-      headerVisible,
+      titleVisible,
       footerVisible,
-      headerGroups,
-      cellGroups,
-      paginationState,
+      ...rest,
       handlePaginationChange,
     };
   },

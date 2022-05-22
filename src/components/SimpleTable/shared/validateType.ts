@@ -26,8 +26,11 @@ export const isArray = Array.isArray;
 export const isUndefined = (obj: any): obj is undefined =>
   validateType(obj, "Undefined");
 export const isNull = (obj: any): obj is null => validateType(obj, "Null");
-export const isNumber = (obj: any): obj is number =>
-  validateType(obj, "Number");
+export const isNumber = (obj: any, allowNaN = true): obj is number => {
+  const numberType = validateType(obj, "Number");
+  if (allowNaN) return numberType;
+  return !isNaN(obj) && numberType;
+};
 export const isString = (obj: any): obj is string =>
   validateType(obj as string, "String");
 export const isBoolean = (obj: any): obj is boolean =>

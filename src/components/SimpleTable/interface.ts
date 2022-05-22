@@ -1,15 +1,26 @@
 import { Slot } from "vue";
 
+type SortableHandler = (a: any, b: any) => number;
+
 // 解析slot 生成的 columns 类型
 export interface ColumnType {
   title?: string;
-  dataIndex?: string | number;
+  "data-index"?: string | number;
   colSpan?: number;
   rowSpan?: number;
   slots?: Record<"title" | "default", Slot>;
-  onSort?: (a: unknown, b: unknown) => number;
-  onFilter?: (a: unknown, b: unknown) => boolean;
+  sortable?:
+    | SortableHandler
+    | {
+        compare: SortableHandler;
+        order?: number; // 多列排序优先级, 越大优先级越高
+        sortOrder?: SortOrderType[];
+      };
 }
+export type NormalizedSortable = Exclude<
+  ColumnType["sortable"],
+  SortableHandler
+>;
 
 export interface ColumnGroupType extends Omit<ColumnType, "dataIndex"> {
   children: ColumnsType;
@@ -21,16 +32,13 @@ export type ColumnsType = (ColumnGroupType | ColumnType)[];
 export type WithKeyProps = { key: string | number };
 export interface HeaderGroupType {
   column: ColumnType;
+  columnKey: string | number;
   headerProps: Record<string, any> & WithKeyProps;
 }
 export type HeaderGroupMatrixType = {
   groups: HeaderGroupType[];
   props: object & WithKeyProps;
 }[];
-
-export type NormalizedColumnsType = { column: ColumnType } & WithKeyProps;
-
-export type SortOrderType = "ascend" | "descend" | undefined;
 
 // 表格主体相关类型
 export type TableBodyDataType = {
@@ -40,3 +48,11 @@ export type TableBodyDataType = {
   } & WithKeyProps)[];
   record: Record<string, any>;
 };
+
+export type SortOrderType = "ascend" | "descend" | undefined;
+export interface SortState
+  extends Pick<ColumnType, "data-index" | "sortable">,
+    Pick<HeaderGroupType, "column" | "columnKey"> {
+  sortState: SortOrderType;
+  sortOrder?: SortOrderType[];
+}
