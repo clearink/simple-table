@@ -15,7 +15,7 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props, { emit }) {
+  setup(props) {
     const { renderTitle } = toRefs(props);
     const renderType = computed(() => {
       return renderTitle.value ? "th" : "td";

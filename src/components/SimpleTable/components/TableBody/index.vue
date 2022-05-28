@@ -1,9 +1,6 @@
 <template>
   <tbody class="s-table-body">
-    <tr
-      v-for="({ cells, record }, i) in dataSource"
-      :key="handleGetRowKey(record, i)"
-    >
+    <tr v-for="{ cells, record } in dataSource" :key="handleGetRowKey(record)">
       <table-cell v-for="{ column, value, key } in cells" :key="key">
         <render-slot
           :slots="column.slots"
@@ -17,13 +14,15 @@
   </tbody>
 </template>
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { defineComponent, PropType, toRefs } from "vue";
 
 // components
 import TableCell from "../TableCell/index.vue";
 import RenderSlot from "../RenderSlot/index.vue";
 // ts
 import type { TableBodyDataType } from "../../interface";
+import { isFunction } from "../../shared/validateType";
+import logger from "../../shared/logger";
 
 export default defineComponent({
   name: "TableBody",
@@ -33,12 +32,17 @@ export default defineComponent({
       type: Array as PropType<TableBodyDataType[]>,
       default: () => [],
     },
+    rowKey: {
+      type: [String, Function] as PropType<string | ((record: any) => any)>,
+      required: true,
+    },
   },
-  setup() {
-    const handleGetRowKey = (record: any, i: number) => {
-      const rowKey = "key";
-      if (rowKey) return record[rowKey];
-      return i;
+  setup(props) {
+    const { rowKey } = toRefs(props);
+    const handleGetRowKey = (record: any) => {
+      if (isFunction(rowKey.value)) return rowKey.value(record);
+      else if (rowKey.value) return record[rowKey.value];
+      else logger.error("[rowKey] 为必须的属性");
     };
     return {
       handleGetRowKey,

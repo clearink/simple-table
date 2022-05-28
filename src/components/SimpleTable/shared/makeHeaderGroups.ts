@@ -3,7 +3,6 @@ import {
   ColumnsType,
   ColumnType,
   HeaderGroupType,
-  WithKeyProps,
 } from "../interface";
 
 // 创建唯一id
@@ -29,7 +28,7 @@ function updateCellSpan(
   };
 
   const maxDepth = groups.length; // 最大深度
-  return groups.reduceRight((groups, columns, depth, _) => {
+  return groups.reduceRight((groups, columns, depth) => {
     const rowSpan = maxDepth - depth;
     for (const column of columns) {
       const { key, parent, ...rest } = column.headerProps;
@@ -47,25 +46,25 @@ function updateCellSpan(
 
 export default function makeHeaderGroups($columns: ColumnsType) {
   const headerGroups: HeaderGroupType[][] = [];
-  const parentCache = new Map<string | number, number>();
-  const allColumns: ({ column: ColumnType } & WithKeyProps)[] = [];
+  const parentCache = new Map<number, number>();
   const getUid = createUid();
 
   // dfs 遍历
   (function traverse($columns: ColumnsType, $parent?: number, depth = 0) {
     const columns = normalizeColumns($columns, $parent);
     const groups = columns.reduce((groups, { column, parent }) => {
-      const { children = [] } = column as ColumnGroupType;
-
-      const hasChildren = children.length > 0;
       const key = getUid();
+      const { children = [] } = column as ColumnGroupType;
+      const hasChildren = children.length > 0;
 
       hasChildren && parentCache.set(key, children.length);
       hasChildren && traverse(children, key, depth + 1);
 
-      allColumns.push({ column, key });
+      const columnKey = (column as ColumnType)["data-index"] ?? key;
+
       return groups.concat({
         column,
+        columnKey,
         headerProps: { key, parent },
       });
     }, [] as HeaderGroupType[]);
@@ -73,15 +72,7 @@ export default function makeHeaderGroups($columns: ColumnsType) {
     headerGroups[depth] = (headerGroups[depth] || []).concat(groups);
   })($columns, undefined);
 
-  return {
-    allColumns,
-    headerGroups: updateCellSpan(headerGroups, parentCache).map((groups) => {
-      return { groups, props: { key: getUid() } };
-    }),
-    dataColumns: allColumns.reduce((result, column) => {
-      const { key } = column;
-      const isLeafColumn = !parentCache.has(key);
-      return result.concat(isLeafColumn ? column : []);
-    }, [] as typeof allColumns),
-  };
+  return updateCellSpan(headerGroups, parentCache).map((groups) => {
+    return { groups, props: { key: getUid() } };
+  });
 }

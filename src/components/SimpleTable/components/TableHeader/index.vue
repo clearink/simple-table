@@ -2,12 +2,12 @@
   <thead class="s-table-header">
     <tr v-for="{ groups, props } in dataSource" v-bind="props" :key="props.key">
       <table-cell
-        v-for="{ column, headerProps } in groups"
+        v-for="{ column, headerProps, columnKey } in groups"
         v-bind="headerProps"
         :key="headerProps.key"
         render-title
       >
-        <div v-if="column.onSort" class="s-table__sorter">
+        <div v-if="column.sortable" class="s-table__sorter">
           <span class="s-table__title">
             <render-slot
               :slots="column.slots"
@@ -18,8 +18,8 @@
             </render-slot>
           </span>
           <table-sorter
-            :value="findSortState(column)"
-            @change="handleSorterChange(column, $event)"
+            :value="findSortState(columnKey)"
+            @change="triggerSorter(columnKey, $event)"
           />
         </div>
         <render-slot v-else :slots="column.slots" type="title">
@@ -36,7 +36,7 @@ import TableCell from "../TableCell/index.vue";
 import TableSorter from "../TableSorter/index.vue";
 import RenderSlot from "../RenderSlot/index.vue";
 
-import { HeaderGroupMatrixType, SortOrderType } from "../../interface";
+import { HeaderGroupMatrixType } from "../../interface";
 
 export default defineComponent({
   name: "TableHeader",
@@ -51,17 +51,13 @@ export default defineComponent({
       default: () => [],
     },
   },
-  setup(props, { emit }) {
+  setup() {
     const triggerSorter = inject<any>("triggerSorter", () => {});
     const findSortState = inject<any>("findSortState", () => {});
 
-    const handleSorterChange = (column: any, type?: SortOrderType) => {
-      emit("table-sort", column, type);
-      triggerSorter(column, type);
-    };
     return {
       findSortState,
-      handleSorterChange,
+      triggerSorter,
     };
   },
 });

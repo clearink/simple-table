@@ -1,17 +1,14 @@
 import { defineComponent, PropType } from "vue";
-import { TableColumnGroupProps as GroupProps } from "../interface";
+import { ColumnType } from "../../interface";
 
 const Component = defineComponent({
   name: "TableColumnGroup",
   props: {
     title: {
-      type: String as PropType<GroupProps<unknown>["title"]>,
+      type: String as PropType<ColumnType["title"]>,
     },
-    onSort: {
-      type: Function as PropType<GroupProps<unknown>["onSort"]>,
-    },
-    onFilter: {
-      type: Function as PropType<GroupProps<unknown>["onFilter"]>,
+    sortable: {
+      type: Object as PropType<ColumnType["sortable"]>,
     },
   },
   setup() {
