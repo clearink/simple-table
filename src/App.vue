@@ -1,9 +1,6 @@
 <template>
   <s-table row-key="key" :data-source="dataSource" @change="handleTableChange">
-    <s-table-column title="Name" data-index="name">
-      <template #title>21232123123</template>
-    </s-table-column>
-
+    <s-table-column title="Name" data-index="name" />
     <s-table-column-group title="Score" :sortable="handleSort('chinese')">
       <s-table-column
         title="Chinese"
@@ -18,7 +15,10 @@
       <s-table-column
         title="Math"
         data-index="math"
-        :sortable="handleSort('math')"
+        :sortable="{
+          compare:handleSort('math'),
+          order: 1
+        }"
       />
       <s-table-column
         title="English"
@@ -46,45 +46,17 @@ export default defineComponent({
   },
   setup() {
     const dataSource = ref<object[]>(
-      [
-        {
-          key: "1",
-          name: "John Brown",
-          chinese: 98,
-          math: 60,
-          english: 70,
-        },
-        {
-          key: "2",
-          name: "Jim Green",
-          chinese: 98,
-          math: 66,
-          english: 89,
-        },
-        {
-          key: "3",
-          name: "Joe Black",
-          chinese: 98,
-          math: 90,
-          english: 70,
-        },
-        {
-          key: "4",
-          name: "Jim Red",
-          chinese: 88,
-          math: 99,
-          english: 89,
-        },
-      ]
-      // Array.from({ length: 50 }, (_, i) => ({
-      //   key: i,
-      //   name: `Jim Red---${i}`,
-      //   chinese: 88,
-      //   math: 99,
-      //   english: 89,
-      // }))
+      Array.from({ length: 30 }, (_, i) => ({
+        key: i,
+        name: `Jim Red---${i}`,
+        chinese: (Math.random() * 100) | 0,
+        math: (Math.random() * 100) | 0,
+        english: (Math.random() * 100) | 0,
+      }))
     );
-    const handleTableChange = () => {};
+    const handleTableChange = (...args: any[]) => {
+      console.log("tableChange", ...args);
+    };
     const handleSort = (type: string) => {
       return function (a: any, b: any) {
         return a[type] - b[type];

@@ -4,6 +4,7 @@ import {
   ColumnType,
   HeaderGroupType,
 } from "../interface";
+import { getColumnKey } from "./utils";
 
 // 创建唯一id
 function createUid() {
@@ -60,7 +61,7 @@ export default function makeHeaderGroups($columns: ColumnsType) {
       hasChildren && parentCache.set(key, children.length);
       hasChildren && traverse(children, key, depth + 1);
 
-      const columnKey = (column as ColumnType)["data-index"] ?? key;
+      const columnKey = getColumnKey(column as ColumnType, key);
 
       return groups.concat({
         column,

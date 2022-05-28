@@ -9,20 +9,32 @@
   ></span>
 </template>
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent, PropType } from "vue";
+import { ColumnType, SortOrderType } from "../../interface";
+import { defaultSortOrder, getNextItem } from "../../shared/utils";
+import { isFunction } from "../../shared/validateType";
 
 export default defineComponent({
   name: "TableSorter",
   emits: ["change"],
-  props: ["value"],
+  props: {
+    value: {
+      type: [String, undefined] as PropType<SortOrderType>,
+    },
+    sortable: {
+      type: [Object, Function] as PropType<ColumnType["sortable"]>,
+    },
+  },
   setup(props, { emit }) {
+    // 获取排序规则
+    const sortOrder = computed(() => {
+      const sortable = props.sortable;
+      if (isFunction(sortable)) return defaultSortOrder;
+      return sortable?.sortOrder ?? defaultSortOrder;
+    });
+
     const handleClick = () => {
-      const map = new Map([
-        [undefined, "ascend"],
-        ["ascend", "descend"],
-        ["descend", undefined],
-      ]);
-      emit("change", map.get(props.value));
+      emit("change", getNextItem(sortOrder.value, props.value));
     };
     return {
       handleClick,

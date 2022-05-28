@@ -3,12 +3,15 @@ import useTableColumns from "../useTableColumns";
 import useHeaderGroups from "../useHeaderGroups";
 import useTableSort from "../useTableSort";
 import useTableBody from "../useTableBody";
-import usePagination, { PaginationProps } from "../usePagination";
+import usePagination from "../usePagination";
+
+// ts
+import type { PaginationProps } from "../../interface";
 
 // 统一处理 table 内部数据操作
 export default function useTableDataSource(
   $dataSource: Ref<any[]>,
-  $pagination: Ref<PaginationProps | null | undefined>,
+  $pagination: Ref<PaginationProps | undefined>,
   defaultSlot?: Slot
 ) {
   const headers = useHeaderGroups(defaultSlot);

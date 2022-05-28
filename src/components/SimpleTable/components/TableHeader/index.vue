@@ -18,6 +18,7 @@
             </render-slot>
           </span>
           <table-sorter
+            :sortable="column.sortable"
             :value="findSortState(columnKey)"
             @change="triggerSorter(columnKey, $event)"
           />
@@ -37,6 +38,7 @@ import TableSorter from "../TableSorter/index.vue";
 import RenderSlot from "../RenderSlot/index.vue";
 
 import { HeaderGroupMatrixType } from "../../interface";
+import { findSortStateToken, triggerSorterToken } from "../../shared/token";
 
 export default defineComponent({
   name: "TableHeader",
@@ -52,8 +54,8 @@ export default defineComponent({
     },
   },
   setup() {
-    const triggerSorter = inject<any>("triggerSorter", () => {});
-    const findSortState = inject<any>("findSortState", () => {});
+    const triggerSorter = inject<any>(triggerSorterToken, () => {});
+    const findSortState = inject<any>(findSortStateToken, () => {});
 
     return {
       findSortState,
