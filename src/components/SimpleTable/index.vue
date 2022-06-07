@@ -14,7 +14,7 @@
     </div>
     <!-- 分页区 -->
     <table-pagination
-      v-if="pagination !== null"
+      v-if="pagination !== false"
       v-bind="paginationState"
       @change="handlePaginationChange"
     />
@@ -37,7 +37,7 @@ import useTableDataSource from "./hooks/useTableDataSource";
 import useSlotExist from "./hooks/useSlotExist";
 
 // ts
-import type { PaginationProps } from "./hooks/usePagination";
+import type { PaginationProps } from "./interface";
 
 export default defineComponent({
   name: "SimpleTable",
@@ -59,7 +59,8 @@ export default defineComponent({
 
     // 分页
     pagination: {
-      type: Object as PropType<PaginationProps | null>,
+      type: [Object, Boolean] as PropType<PaginationProps>,
+      default: undefined
     },
   },
   emits: ["change"],
@@ -73,12 +74,9 @@ export default defineComponent({
     const handlePaginationChange = (current: number, pageSize: number) => {
       const pagination = { current, pageSize, total: rows.value.length };
       if (props.pagination === undefined) {
-        // 修改内部的数据
-        updatePagination(pagination);
-      } else {
-        const sorter = {};
-        handleTableChange(pagination, sorter, { type: "pagination" });
+        updatePagination(pagination); // 修改内部的数据
       }
+      handleTableChange(pagination, {}, { type: "pagination" });
     };
 
     // custom hook

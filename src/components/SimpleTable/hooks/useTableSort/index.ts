@@ -1,31 +1,22 @@
 import { computed, provide, Ref, shallowRef } from "vue";
-import {
-  HeaderGroupType,
-  NormalizedSortable,
-  SortOrderType,
-} from "../../interface";
+import { findSortStateToken, triggerSorterToken } from "../../shared/token";
+import { HeaderGroupType, SortOrderType } from "../../interface";
 import logger from "../../shared/logger";
 
-import {
-  collectSortState,
-  getNextCycleItem,
-  normalizeSortRuleList,
-} from "../../shared/utils";
+import { collectSortState, getSortRatio } from "../../shared/utils";
 import { isFunction, isNumber, isUndefined } from "../../shared/validateType";
 
 // 排序
 export default function useTableSort(
   $dataSource: Ref<any[]>,
   $columns: Ref<HeaderGroupType[]>
-) {
-  const states = shallowRef(
-    normalizeSortRuleList(collectSortState($columns.value))
-  );
+  ) {
+    const states = shallowRef(collectSortState($columns.value));
 
   // 是否为多列排序
   const multipleSort = computed(() => {
     const orderSet = states.value.reduce((set, { sortable }) => {
-      const order = (sortable as NormalizedSortable)?.order;
+      const order = sortable?.order;
       !isUndefined(order) && set.add(order);
       return set;
     }, new Set<number>());
@@ -34,19 +25,16 @@ export default function useTableSort(
 
   const dataSource = computed(() => {
     return states.value.reduce((result, rules) => {
-      const { sortable, sortOrder, sortState } = rules;
-      const compare = (sortable as NormalizedSortable)?.compare;
+      const { sortable, sortState } = rules;
+      const compare = sortable?.compare;
       return result.sort((a, b) => {
         if (isFunction(compare)) {
           const result = compare(a, b);
           if (!isNumber(result, false)) {
             logger.warn("[sortable.compare] 返回值必须是number");
           }
-          return result * getNextCycleItem(sortOrder!, sortState);
-        } else {
-          logger.error("[sortable.compare] 必须是函数");
-          return 0;
-        }
+          return result * getSortRatio(sortState);
+        } else return 0;
       });
     }, $dataSource.value.slice());
   });
@@ -68,8 +56,8 @@ export default function useTableSort(
     });
     return rules?.sortState;
   };
-  provide("triggerSorter", triggerSorter);
-  provide("findSortState", findSortState);
+  provide(triggerSorterToken, triggerSorter);
+  provide(findSortStateToken, findSortState);
 
   return dataSource;
 }

@@ -12,15 +12,11 @@ export interface ColumnType {
   sortable?:
     | SortableHandler
     | {
-        compare: SortableHandler;
+        compare?: SortableHandler;
         order?: number; // 多列排序优先级, 越大优先级越高
         sortOrder?: SortOrderType[];
       };
 }
-export type NormalizedSortable = Exclude<
-  ColumnType["sortable"],
-  SortableHandler
->;
 
 export interface ColumnGroupType extends Omit<ColumnType, "dataIndex"> {
   children: ColumnsType;
@@ -54,5 +50,10 @@ export interface SortState
   extends Pick<ColumnType, "data-index" | "sortable">,
     Pick<HeaderGroupType, "column" | "columnKey"> {
   sortState: SortOrderType;
-  sortOrder?: SortOrderType[];
 }
+
+export type PaginationProps = false | {
+  current?: number;
+  pageSize?: number;
+  total?: number;
+};

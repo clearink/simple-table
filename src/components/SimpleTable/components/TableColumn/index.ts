@@ -1,4 +1,5 @@
 import { defineComponent, PropType } from "vue";
+import { tableColumnToken } from "../../shared/token";
 import { ColumnType } from "../../interface";
 const Component = defineComponent({
   name: "TableColumn",
@@ -10,12 +11,12 @@ const Component = defineComponent({
       type: [String, Number] as PropType<ColumnType["data-index"]>,
     },
     sortable: {
-      type: Object as PropType<ColumnType["sortable"]>,
+      type: [Object, Function] as PropType<ColumnType["sortable"]>,
     },
   },
   setup() {
     return () => null;
   },
 });
-Component.displayName = Symbol.for("TableColumn");
+Component.displayName = tableColumnToken;
 export default Component;

@@ -2,6 +2,10 @@ import { mount } from "@vue/test-utils";
 import SimpleTable from "@/components/SimpleTable/index.vue";
 import SimpleTableColumn from "@/components/SimpleTable/components/TableColumn";
 import { h } from "vue";
+// import SimpleTable, {
+//   SimpleTableColumn,1
+//   SimpleTableColumnGroup,
+// } from "@/components/SimpleTable/index.vue";
 
 const createDataSource = (length: number) => {
   return Array.from({ length }, (_, i) => ({

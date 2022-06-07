@@ -1,4 +1,5 @@
 import { defineComponent, PropType } from "vue";
+import { tableColumnGroupToken } from "../../shared/token";
 import { ColumnType } from "../../interface";
 
 const Component = defineComponent({
@@ -8,7 +9,7 @@ const Component = defineComponent({
       type: String as PropType<ColumnType["title"]>,
     },
     sortable: {
-      type: Object as PropType<ColumnType["sortable"]>,
+      type: [Object, Function] as PropType<ColumnType["sortable"]>,
     },
   },
   setup() {
@@ -16,5 +17,5 @@ const Component = defineComponent({
   },
 });
 
-Component.displayName = Symbol.for("TableColumnGroup");
+Component.displayName = tableColumnGroupToken;
 export default Component;
